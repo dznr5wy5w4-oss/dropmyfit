@@ -1,252 +1,723 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>DropMyFit — Snap. Price. Post.</title>
+<title>dropmyfit — AI writes it. You tap once. It's live.</title>
 <style>
 :root {
-  --ice:#CEEAEE; --blush:#FEE0EC; --sage:#A9D6D1; --bubblegum:#F7A8C7;
-  --ice-deep:#8CC8D0; --sage-deep:#6BADA7; --blush-deep:#F0A0C0; --bubble-deep:#E06090;
-  --gold:#D4A574; --gold-bg:#FBF4E8;
-  --bg:#FAFCFD; --surface:#FFFFFF; --border:#E8F4F6; --border2:#D8ECE8;
-  --text:#1C2B2E; --muted:#7A9EA4;
-  --fb:#1877F2; --ig1:#f09433; --ig2:#dc2743; --ig3:#bc1888;
-  --tt:#FE2C55; --snap:#FFFC00;
-  --green:#10B981; --green-bg:#ECFDF5; --red:#F43F5E;
+  /* ── Swatch colours ── */
+  --ice:    #CEEAEE;   /* IMG_5200 pale ice blue    */
+  --blush:  #FEE0EC;   /* IMG_5199 soft baby pink   */
+  --sage:   #A9D6D1;   /* IMG_5198 sage mint teal   */
+  --bubblegum: #F7A8C7; /* IMG_5197 bubblegum pink  */
+
+/* Derived tones */
+--ice-deep:    #8CC8D0;
+--sage-deep:   #6BADA7;
+--blush-deep:  #F0A0C0;
+--bubble-deep: #E06090;
+--velvet:      #643859;
+
+/* Neutrals */
+--bg:       #FAFCFD;
+--surface:  #FFFFFF;
+--border:   #E8F4F6;
+--border2:  #D8ECE8;
+--text:     #1C2B2E;
+--muted:    #7A9EA4;
+
+/* Platform */
+--fb:#1877F2; --ig1:#f09433; --ig2:#dc2743; --ig3:#bc1888;
+--tt:#FE2C55; --snap:#FFFC00;
+--green:#10B981; --green-bg:#ECFDF5;
+--red:#F43F5E;
 }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Times New Roman', Times, Georgia, serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+body {
+font-family: 'Times New Roman', Times, Georgia, serif;
+background: var(--bg);
+color: var(--text);
+min-height: 100vh;
+}
+
+/* Subtle mesh background */
 body::before {
-  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background:
-    radial-gradient(ellipse 70% 50% at -5% -5%, rgba(169,214,209,.25) 0%, transparent 55%),
-    radial-gradient(ellipse 55% 40% at 105% 15%, rgba(247,168,199,.20) 0%, transparent 55%),
-    radial-gradient(ellipse 45% 40% at 50% 108%, rgba(206,234,238,.22) 0%, transparent 55%);
+content: '';
+position: fixed; inset: 0; pointer-events: none; z-index: 0;
+background:
+radial-gradient(ellipse 70% 50% at -5% -5%,  rgba(169,214,209,.25) 0%, transparent 55%),
+radial-gradient(ellipse 55% 40% at 105% 15%, rgba(247,168,199,.20) 0%, transparent 55%),
+radial-gradient(ellipse 45% 40% at 50% 108%, rgba(206,234,238,.22) 0%, transparent 55%);
 }
+
+/* ── HEADER ── */
 header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 18px; background: rgba(250,252,253,.93);
-  backdrop-filter: blur(20px); border-bottom: 1.5px solid var(--ice);
-  position: sticky; top: 0; z-index: 100;
+display: flex; align-items: center; justify-content: space-between;
+padding: 16px 18px;
+background: rgba(250,252,253,.93);
+backdrop-filter: blur(20px);
+border-bottom: 1.5px solid var(--ice);
+position: sticky; top: 0; z-index: 100;
 }
+
 .logo-wrap { display: flex; flex-direction: column; }
+
 .logo {
-  font-size: 1.6rem; font-weight: 700; font-style: italic;
-  letter-spacing: -.3px; line-height: 1;
-  background: linear-gradient(120deg, var(--bubble-deep) 0%, var(--sage-deep) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+font-family: 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+font-weight: 500;
+font-size: 1.55rem;
+letter-spacing: -.06em;
+line-height: 1;
 }
-.logo-sub { font-size: .62rem; font-style: italic; color: var(--muted); letter-spacing: 1px; margin-top: 2px; }
+.logo .w1 { color: var(--velvet); }
+.logo .w2 { color: var(--bubble-deep); }
+.logo .w3 { color: var(--sage-deep); }
+
+.logo-sub {
+font-family: 'Times New Roman', Times, serif;
+font-size: .62rem; font-style: italic; color: var(--muted);
+letter-spacing: 1px; margin-top: 4px;
+}
+
 .pro-pill {
-  display: flex; align-items: center; gap: 6px;
-  padding: 7px 14px; cursor: pointer;
-  background: var(--surface); border: 1.5px solid var(--ice);
-  border-radius: 20px; transition: all .2s;
-  font-size: .78rem; font-style: italic; color: var(--muted);
+display: flex; align-items: center; gap: 6px;
+padding: 7px 14px; cursor: pointer;
+background: var(--surface); border: 1.5px solid var(--ice);
+border-radius: 20px; transition: all .2s;
+font-family: 'Times New Roman', Times, serif;
+font-size: .78rem; font-style: italic; color: var(--muted);
 }
+.pro-pill.on { background: var(--blush); border-color: var(--bubblegum); color: var(--bubble-deep); }
+.pro-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+/* ── MAIN ── */
 main { max-width: 480px; margin: 0 auto; padding: 0 16px 100px; position: relative; z-index: 1; }
-.sh { display: flex; align-items: center; gap: 8px; margin: 24px 0 11px; font-size: .72rem; font-style: italic; color: var(--muted); letter-spacing: 1px; }
-.sh::after { content: ''; flex: 1; height: 1px; background: var(--ice); }
-.upload {
-  border: 2px dashed var(--ice-deep); border-radius: 20px;
-  background: var(--surface); min-height: 200px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  cursor: pointer; transition: all .25s; position: relative; overflow: hidden;
+
+/* ── SECTION HEADS ── */
+.sh {
+display: flex; align-items: center; gap: 8px;
+margin: 24px 0 11px;
+font-family: 'Times New Roman', Times, serif;
+font-size: .72rem; font-style: italic; color: var(--muted); letter-spacing: 1px;
 }
+.sh::after { content: ''; flex: 1; height: 1px; background: var(--ice); }
+
+/* ── UPLOAD ── */
+.upload {
+border: 2px dashed var(--ice-deep); border-radius: 20px;
+background: var(--surface); min-height: 200px;
+display: flex; flex-direction: column; align-items: center; justify-content: center;
+cursor: pointer; transition: all .25s; position: relative; overflow: hidden;
+box-shadow: 0 2px 16px rgba(169,214,209,.15);
+}
+.upload:hover { border-color: var(--sage-deep); transform: scale(1.007); box-shadow: 0 6px 24px rgba(169,214,209,.25); }
+.upload.drag { border-color: var(--sage); border-style: solid; background: var(--ice); }
 .upload.filled { min-height: 260px; border-style: solid; border-color: var(--bubblegum); }
 .upload img { width: 100%; height: 100%; object-fit: cover; border-radius: 18px; display: block; }
 .uph { text-align: center; padding: 22px; }
-.uico { font-size: 2.8rem; margin-bottom: 12px; display: block; }
-.utitle { font-size: 1rem; font-style: italic; font-weight: 700; margin-bottom: 4px; }
-.uhint { font-size: .75rem; color: var(--muted); font-style: italic; }
+.uico { font-size: 2.8rem; margin-bottom: 12px; display: block; animation: bob 3s ease-in-out infinite; }
+@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+.utitle {
+font-family: 'Times New Roman', Times, serif;
+font-size: 1rem; font-style: italic; font-weight: 700; margin-bottom: 4px;
+}
+.uhint {
+font-family: 'Times New Roman', Times, serif;
+font-size: .75rem; color: var(--muted); font-style: italic;
+}
 .cpill {
-  position: absolute; bottom: 10px; right: 10px;
-  background: rgba(255,255,255,.92); border: 1.5px solid var(--bubblegum);
-  color: var(--bubble-deep); border-radius: 20px;
-  padding: 6px 13px; font-size: .72rem; font-style: italic; cursor: pointer;
-  display: none;
+position: absolute; bottom: 10px; right: 10px;
+background: rgba(255,255,255,.92); border: 1.5px solid var(--bubblegum);
+color: var(--bubble-deep); border-radius: 20px;
+padding: 6px 13px; font-family: 'Times New Roman', serif;
+font-size: .72rem; font-style: italic; cursor: pointer;
+backdrop-filter: blur(8px); display: none; transition: all .2s;
 }
 .upload.filled .cpill { display: block; }
+.cpill:hover { background: var(--bubblegum); color: var(--text); }
 #fi { display: none; }
 .thumbs { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
 .thumb { position: relative; width: 64px; height: 64px; border-radius: 12px; overflow: hidden; border: 1.5px solid var(--bubblegum); }
 .thumb img { width: 100%; height: 100%; object-fit: cover; }
 .thumb .x {
-  position: absolute; top: 2px; right: 2px;
-  width: 18px; height: 18px; border-radius: 50%;
-  background: rgba(28,43,46,.8); color: #fff;
-  font-size: .7rem; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; border: none;
+position: absolute; top: 2px; right: 2px;
+width: 18px; height: 18px; border-radius: 50%;
+background: rgba(28,43,46,.8); color: #fff;
+font-size: .7rem; display: flex; align-items: center; justify-content: center;
+cursor: pointer; border: none;
 }
 .thumb-add {
-  width: 64px; height: 64px; border-radius: 12px;
-  border: 1.5px dashed var(--ice-deep); background: var(--surface);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.4rem; color: var(--muted); cursor: pointer;
+width: 64px; height: 64px; border-radius: 12px;
+border: 1.5px dashed var(--ice-deep); background: var(--surface);
+display: flex; align-items: center; justify-content: center;
+font-size: 1.4rem; color: var(--muted); cursor: pointer;
 }
-.meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.meta-input {
-  background: var(--surface); border: 1.5px solid var(--ice-deep);
-  border-radius: 12px; padding: 11px 13px;
-  font-size: .82rem; font-style: italic; color: var(--text); font-family: inherit;
-}
+
+/* ── CHIPS ── */
 .chips { display: flex; gap: 7px; flex-wrap: wrap; }
 .chip {
-  padding: 8px 15px; border: 1.5px solid var(--ice-deep); border-radius: 20px;
-  background: var(--surface); color: var(--muted); cursor: pointer; transition: all .2s;
-  white-space: nowrap; font-size: .78rem; font-style: italic;
+padding: 8px 15px; border: 1.5px solid var(--ice-deep); border-radius: 20px;
+background: var(--surface); color: var(--muted); cursor: pointer; transition: all .2s;
+white-space: nowrap;
+font-family: 'Times New Roman', Times, serif; font-size: .78rem; font-style: italic;
 }
+.chip:hover { border-color: var(--sage); color: var(--sage-deep); }
 .chip.on { background: var(--ice); border-color: var(--sage-deep); color: var(--sage-deep); }
+
+/* ── PLATFORM GRID ── */
 .pltgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .plt {
-  display: flex; align-items: center; gap: 9px; padding: 11px 13px;
-  border: 1.5px solid var(--border); border-radius: 14px;
-  background: var(--surface); cursor: pointer; transition: all .2s;
+display: flex; align-items: center; gap: 9px; padding: 11px 13px;
+border: 1.5px solid var(--border); border-radius: 14px;
+background: var(--surface); cursor: pointer; transition: all .2s; user-select: none;
 }
+.plt:hover { transform: translateY(-1px); box-shadow: 0 3px 12px rgba(169,214,209,.2); }
 .plt.wide { grid-column: span 2; }
-.pico { font-size: 1.25rem; }
-.pn { font-size: .8rem; font-weight: 700; font-style: italic; flex: 1; }
-.psub { font-size: .62rem; color: var(--muted); font-style: italic; }
+.pico { font-size: 1.25rem; flex-shrink: 0; }
+.pn {
+font-family: 'Times New Roman', Times, serif;
+font-size: .8rem; font-weight: 700; font-style: italic; flex: 1;
+}
+.psub {
+font-family: 'Times New Roman', Times, serif;
+font-size: .62rem; color: var(--muted); font-style: italic;
+}
 .pck {
-  width: 18px; height: 18px; border-radius: 6px;
-  border: 1.5px solid var(--border2); background: var(--bg);
-  display: flex; align-items: center; justify-content: center;
-  font-size: .62rem;
+width: 18px; height: 18px; border-radius: 6px;
+border: 1.5px solid var(--border2); background: var(--bg);
+display: flex; align-items: center; justify-content: center;
+font-size: .62rem; transition: all .2s; flex-shrink: 0;
 }
 .plt.on .pck { background: var(--sage); border-color: var(--sage-deep); color: white; }
-.gen {
-  width: 100%; margin-top: 20px; border: none; border-radius: 16px; padding: 17px;
-  background: linear-gradient(115deg, var(--bubblegum) 0%, var(--sage) 100%);
-  color: var(--text); font-size: 1.05rem; font-weight: 700; font-style: italic;
-  cursor: pointer; font-family: inherit;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
+.plt.fb.on  { background: #EEF6FF; border-color: #B3D4F5; }
+.plt.fb.on .pn { color: var(--fb); }
+.plt.ig.on  { background: var(--blush); border-color: var(--blush-deep); }
+.plt.ig.on .pn { color: var(--bubble-deep); }
+.plt.tt.on  { background: #FFF0F2; border-color: #FFC0CA; }
+.plt.tt.on .pn { color: var(--tt); }
+.plt.snap.on { background: #FFFDE7; border-color: #FDD835; }
+.plt.snap.on .pn { color: #92740A; }
+.plt.tts.on { background: #FFF0F2; border-color: #FFC0CA; }
+.plt.tts.on .pn { color: var(--tt); }
+
+/* ── PRO PANEL ── */
+.pro-panel {
+background: var(--blush); border: 1.5px solid var(--bubblegum);
+border-radius: 14px; padding: 14px;
+display: none; flex-direction: column; gap: 9px; margin-top: 2px;
 }
-.gen:disabled { opacity: .4; cursor: not-allowed; }
+.pro-panel.open { display: flex; animation: fi .25s ease; }
+@keyframes fi { from{opacity:0;transform:translateY(-5px)} to{opacity:1;transform:translateY(0)} }
+.pro-note {
+font-family: 'Times New Roman', serif;
+font-size: .74rem; font-style: italic; color: var(--bubble-deep);
+}
+.api-row {
+display: flex; align-items: center; justify-content: space-between;
+padding: 10px 12px; background: var(--surface);
+border: 1.5px solid var(--border); border-radius: 12px;
+}
+.al { display: flex; align-items: center; gap: 9px; }
+.al-ico { font-size: 1.1rem; }
+.al-name {
+font-family: 'Times New Roman', serif;
+font-size: .82rem; font-weight: 700; font-style: italic;
+}
+.al-sub {
+font-family: 'Times New Roman', serif;
+font-size: .65rem; color: var(--muted); font-style: italic;
+}
+.adot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: none; box-shadow: 0 0 5px var(--green); }
+.api-row.linked .adot { display: block; }
+.abtn {
+font-family: 'Times New Roman', serif;
+font-size: .74rem; font-style: italic; font-weight: 700;
+padding: 7px 14px; border-radius: 20px; border: none; cursor: pointer; transition: all .2s;
+}
+.abtn.igc { background: linear-gradient(135deg,var(--ig1),var(--ig2),var(--ig3)); color: #fff; }
+.abtn.ttc { background: var(--tt); color: #fff; }
+.abtn.done { background: var(--green-bg); color: var(--green); border: 1px solid rgba(16,185,129,.3); cursor: default; }
+.abtn:not(.done):hover { transform: scale(1.05); }
+
+/* ── GENERATE ── */
+.gen {
+width: 100%; margin-top: 20px; border: none; border-radius: 16px; padding: 17px;
+background: linear-gradient(115deg, var(--bubblegum) 0%, var(--sage) 100%);
+color: var(--text);
+font-family: 'Times New Roman', Times, serif;
+font-size: 1.05rem; font-weight: 700; font-style: italic;
+cursor: pointer; transition: all .3s;
+box-shadow: 0 4px 20px rgba(247,168,199,.35);
+display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.gen:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(247,168,199,.45); }
+.gen:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ── LOADER ── */
 .loader { height: 3px; background: var(--ice); border-radius: 3px; margin-top: 12px; display: none; overflow: hidden; }
 .loader.on { display: block; }
-.lbar { height: 100%; background: linear-gradient(90deg, var(--bubblegum), var(--sage), var(--ice-deep)); animation: ls 1.4s ease-in-out infinite; }
+.lbar {
+height: 100%; border-radius: 3px;
+background: linear-gradient(90deg, var(--bubblegum), var(--sage), var(--ice-deep));
+background-size: 200%; animation: ls 1.4s ease-in-out infinite;
+}
 @keyframes ls { 0%{width:0;margin-left:0} 50%{width:55%;margin-left:20%} 100%{width:0;margin-left:100%} }
-.ltxt { text-align: center; margin-top: 9px; display: none; font-size: .78rem; font-style: italic; color: var(--muted); }
+.ltxt {
+text-align: center; margin-top: 9px; display: none;
+font-family: 'Times New Roman', serif; font-size: .78rem; font-style: italic; color: var(--muted);
+}
 .ltxt.on { display: block; }
-.errbox { background: #FFF1F2; border: 1px solid #FECDD3; border-radius: 12px; padding: 11px 14px; margin-top: 10px; display: none; font-size: .78rem; font-style: italic; color: var(--red); }
+.errbox {
+background: #FFF1F2; border: 1px solid #FECDD3; border-radius: 12px;
+padding: 11px 14px; margin-top: 10px; display: none;
+font-family: 'Times New Roman', serif; font-size: .78rem; font-style: italic; color: var(--red);
+}
 .errbox.on { display: block; }
+
+/* ── RESULTS ── */
 .results { display: none; }
-.results.on { display: block; }
+.results.on { display: block; animation: ru .4s cubic-bezier(.34,1.56,.64,1); }
+@keyframes ru { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── PRICE CARD ── */
 .pcard {
-  background: linear-gradient(130deg, var(--blush) 0%, var(--ice) 100%);
-  border: 1.5px solid var(--bubblegum); border-radius: 20px;
-  padding: 18px 20px; display: flex; align-items: center;
-  justify-content: space-between; gap: 10px;
+background: linear-gradient(130deg, var(--blush) 0%, var(--ice) 100%);
+border: 1.5px solid var(--bubblegum); border-radius: 20px;
+padding: 18px 20px; display: flex; align-items: center;
+justify-content: space-between; gap: 10px;
+box-shadow: 0 4px 20px rgba(247,168,199,.18);
 }
-.plbl { font-size: .62rem; font-style: italic; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 2px; }
+.plbl {
+font-family: 'Times New Roman', serif;
+font-size: .62rem; font-style: italic; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 2px;
+}
 .pval {
-  font-size: 3rem; font-weight: 700; font-style: italic; letter-spacing: -2px;
-  background: linear-gradient(120deg, var(--bubble-deep) 0%, var(--sage-deep) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+font-family: 'Times New Roman', Times, serif;
+font-size: 3rem; font-weight: 700; font-style: italic; letter-spacing: -2px;
+background: linear-gradient(120deg, var(--bubble-deep) 0%, var(--sage-deep) 100%);
+-webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-.prng { font-size: .72rem; font-style: italic; color: var(--muted); margin-top: 3px; }
+.prng {
+font-family: 'Times New Roman', serif;
+font-size: .72rem; font-style: italic; color: var(--muted); margin-top: 3px;
+}
 .ipill {
-  background: var(--surface); border: 1.5px solid var(--bubblegum);
-  color: var(--bubble-deep); border-radius: 20px;
-  padding: 9px 14px; max-width: 145px; text-align: center; line-height: 1.3;
-  font-size: .75rem; font-style: italic; font-weight: 700;
+background: var(--surface); border: 1.5px solid var(--bubblegum);
+color: var(--bubble-deep); border-radius: 20px;
+padding: 9px 14px; max-width: 145px; text-align: center; line-height: 1.3;
+font-family: 'Times New Roman', serif; font-size: .75rem; font-style: italic; font-weight: 700;
 }
+
+/* ── TABS ── */
 .tabs { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 2px; }
+.tabs::-webkit-scrollbar { display: none; }
 .tab {
-  flex-shrink: 0; padding: 8px 15px; border: 1.5px solid var(--ice-deep);
-  border-radius: 20px; background: var(--surface);
-  color: var(--muted); cursor: pointer; transition: all .2s;
-  white-space: nowrap; font-size: .75rem; font-style: italic;
+flex-shrink: 0; padding: 8px 15px; border: 1.5px solid var(--ice-deep);
+border-radius: 20px; background: var(--surface);
+color: var(--muted); cursor: pointer; transition: all .2s;
+white-space: nowrap;
+font-family: 'Times New Roman', serif; font-size: .75rem; font-style: italic;
 }
+.tab:hover { border-color: var(--sage); color: var(--sage-deep); }
 .tab.on { background: var(--ice); border-color: var(--sage-deep); color: var(--sage-deep); }
-.card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 18px; overflow: hidden; margin-bottom: 14px; }
-.ch { display: flex; align-items: center; gap: 8px; padding: 12px 15px; background: var(--ice); border-bottom: 1px solid var(--ice-deep); }
+
+/* ── CARD ── */
+.card {
+background: var(--surface); border: 1.5px solid var(--border);
+border-radius: 18px; overflow: hidden; margin-bottom: 14px;
+box-shadow: 0 2px 14px rgba(169,214,209,.1);
+}
+.ch {
+display: flex; align-items: center; gap: 8px;
+padding: 12px 15px; background: var(--ice); border-bottom: 1px solid var(--ice-deep);
+}
 .cico { font-size: 1.2rem; }
-.cname { font-size: .85rem; font-weight: 700; font-style: italic; flex: 1; }
-.badge { font-size: .62rem; font-style: italic; padding: 3px 9px; border-radius: 10px; }
-.badge.dl { background: var(--blush); color: var(--bubble-deep); border: 1px solid var(--blush-deep); }
+.cname {
+font-family: 'Times New Roman', serif;
+font-size: .85rem; font-weight: 700; font-style: italic; flex: 1;
+}
+.badge {
+font-family: 'Times New Roman', serif;
+font-size: .62rem; font-style: italic; padding: 3px 9px; border-radius: 10px;
+}
+.badge.api { background: var(--green-bg); color: var(--green); border: 1px solid rgba(16,185,129,.25); }
+.badge.dl  { background: var(--blush); color: var(--bubble-deep); border: 1px solid var(--blush-deep); }
 .cb { padding: 14px 15px; }
-.ctitle { font-size: .95rem; font-weight: 700; font-style: italic; margin-bottom: 9px; line-height: 1.4; }
-.cdesc { font-size: .82rem; line-height: 1.75; color: #4A6066; font-style: italic; white-space: pre-wrap; }
+.ctitle {
+font-family: 'Times New Roman', serif;
+font-size: .95rem; font-weight: 700; font-style: italic; margin-bottom: 9px; line-height: 1.4;
+}
+.cdesc {
+font-family: 'Times New Roman', serif;
+font-size: .82rem; line-height: 1.75; color: #4A6066; font-style: italic; white-space: pre-wrap;
+}
 .htags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
-.htag { font-size: .68rem; font-style: italic; font-weight: 700; color: var(--sage-deep); background: var(--ice); padding: 3px 9px; border-radius: 12px; border: 1px solid var(--ice-deep); }
+.htag {
+font-family: 'Times New Roman', serif;
+font-size: .68rem; font-style: italic; font-weight: 700;
+color: var(--sage-deep); background: var(--ice);
+padding: 3px 9px; border-radius: 12px; border: 1px solid var(--ice-deep);
+}
+
+/* TikTok Shop block */
+.tts-block {
+background: #FFF4F6; border: 1.5px solid #FFC0CA;
+border-radius: 12px; padding: 12px 14px; margin-top: 10px;
+}
+.tts-head {
+font-family: 'Times New Roman', serif;
+font-size: .7rem; font-style: italic; font-weight: 700; color: var(--tt); margin-bottom: 5px;
+}
+.tts-price {
+font-family: 'Times New Roman', serif;
+font-size: 1.2rem; font-weight: 700; font-style: italic; color: var(--tt);
+}
+.tts-note {
+font-family: 'Times New Roman', serif;
+font-size: .68rem; font-style: italic; color: #9B4050; font-weight: 600; margin-top: 3px; line-height: 1.45;
+}
+.tts-btn {
+display: inline-flex; align-items: center; gap: 5px; margin-top: 9px;
+background: var(--tt); color: #fff; border: none; border-radius: 20px;
+padding: 7px 15px;
+font-family: 'Times New Roman', serif; font-size: .74rem; font-style: italic; font-weight: 700;
+cursor: pointer; transition: all .2s;
+}
+.tts-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+/* ── ACTIONS ── */
 .actions { display: flex; gap: 7px; padding: 0 15px 14px; }
-.btn { flex: 1; padding: 10px 6px; border-radius: 12px; border: none; font-size: .75rem; font-style: italic; font-weight: 700; cursor: pointer; font-family: inherit; }
+.btn {
+flex: 1; padding: 10px 6px; border-radius: 12px; border: none;
+font-family: 'Times New Roman', serif; font-size: .75rem; font-style: italic; font-weight: 700;
+cursor: pointer; transition: all .2s;
+display: flex; align-items: center; justify-content: center; gap: 4px;
+}
 .btn-ghost { background: var(--ice); color: var(--sage-deep); border: 1.5px solid var(--ice-deep); }
-.btn-fb { background: var(--fb); color: #fff; }
-.btn-ig { background: linear-gradient(135deg,var(--ig1),var(--ig2),var(--ig3)); color: #fff; }
-.btn-tt { background: var(--tt); color: #fff; }
+.btn-ghost:hover { background: var(--sage); color: var(--text); }
+.btn-fb   { background: var(--fb);  color: #fff; }
+.btn-ig   { background: linear-gradient(135deg,var(--ig1),var(--ig2),var(--ig3)); color: #fff; }
+.btn-tt   { background: var(--tt);  color: #fff; }
 .btn-snap { background: var(--snap); color: #222; }
-.btn-tts { background: linear-gradient(110deg,var(--tt),#111); color: #fff; }
-.tips { background: var(--surface); border: 1.5px solid var(--border); border-left: 3px solid var(--bubblegum); border-radius: 14px; padding: 14px 15px; margin-bottom: 16px; }
-.tips-head { font-size: .65rem; font-style: italic; letter-spacing: 1.5px; color: var(--bubble-deep); margin-bottom: 9px; }
-.tip { font-size: .8rem; font-style: italic; color: #4A6066; padding-left: 14px; margin-bottom: 5px; position: relative; line-height: 1.6; }
-.tip::before { content: '→'; position: absolute; left: 0; color: var(--sage-deep); }
+.btn-tts  { background: linear-gradient(110deg,var(--tt),#111); color: #fff; }
+.btn:not(.btn-ghost):hover { opacity: .88; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+
+/* ── TIPS ── */
+.tips {
+background: var(--surface); border: 1.5px solid var(--border);
+border-left: 3px solid var(--bubblegum);
+border-radius: 14px; padding: 14px 15px; margin-bottom: 16px;
+}
+.tips-head {
+font-family: 'Times New Roman', serif;
+font-size: .65rem; font-style: italic; letter-spacing: 1.5px; color: var(--bubble-deep); margin-bottom: 9px;
+}
+.tip {
+font-family: 'Times New Roman', serif;
+font-size: .8rem; font-style: italic; color: #4A6066;
+padding-left: 14px; margin-bottom: 5px; position: relative; line-height: 1.6;
+}
+.tip::before { content: '→'; position: absolute; left: 0; color: var(--sage-deep); font-size: .72rem; }
+
+/* ── TOAST ── */
 .toast {
-  position: fixed; bottom: 24px; left: 50%;
-  transform: translateX(-50%) translateY(5px);
-  background: var(--surface); color: var(--sage-deep);
-  border: 1.5px solid var(--sage); border-radius: 20px;
-  padding: 10px 20px; font-size: .8rem; font-style: italic; font-weight: 700;
-  opacity: 0; pointer-events: none; transition: all .25s;
-  white-space: nowrap; z-index: 999;
+position: fixed; bottom: 24px; left: 50%;
+transform: translateX(-50%) translateY(5px);
+background: var(--surface); color: var(--sage-deep);
+border: 1.5px solid var(--sage); border-radius: 20px;
+padding: 10px 20px;
+font-family: 'Times New Roman', serif; font-size: .8rem; font-style: italic; font-weight: 700;
+opacity: 0; pointer-events: none; transition: all .25s;
+white-space: nowrap; z-index: 999;
+box-shadow: 0 6px 22px rgba(169,214,209,.3);
 }
 .toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
-.neg-card { background: linear-gradient(135deg, var(--gold-bg) 0%, var(--blush) 100%); border: 1.5px solid var(--gold); border-radius: 18px; padding: 18px; margin-top: 14px; }
-.neg-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.neg-ico { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--bubblegum)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
-.neg-title { font-size: 1rem; font-weight: 700; font-style: italic; }
-.neg-sub { font-size: .68rem; font-style: italic; color: var(--muted); }
-.neg-rules { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-.neg-input { background: var(--surface); border: 1.5px solid var(--gold); border-radius: 10px; padding: 9px 11px; font-size: .78rem; font-style: italic; font-family: inherit; }
-.neg-textarea { width: 100%; min-height: 70px; resize: vertical; background: var(--surface); border: 1.5px solid var(--gold); border-radius: 12px; padding: 11px 13px; margin-bottom: 9px; font-size: .82rem; font-style: italic; color: var(--text); font-family: inherit; }
-.neg-btn { width: 100%; padding: 12px; border: none; border-radius: 12px; background: linear-gradient(110deg, var(--gold), var(--bubblegum)); color: #fff; font-size: .9rem; font-weight: 700; font-style: italic; cursor: pointer; font-family: inherit; }
-.neg-btn:disabled { opacity: .5; cursor: not-allowed; }
-.neg-replies { margin-top: 12px; display: none; flex-direction: column; gap: 9px; }
-.neg-replies.on { display: flex; }
-.neg-reply { background: var(--surface); border: 1.5px solid var(--gold); border-radius: 12px; padding: 11px 13px; }
-.neg-reply-label { font-size: .65rem; font-style: italic; font-weight: 700; color: var(--gold); letter-spacing: 1px; margin-bottom: 5px; }
-.neg-reply-body { font-size: .85rem; font-style: italic; line-height: 1.55; color: var(--text); white-space: pre-wrap; margin-bottom: 9px; }
-.neg-reply-actions { display: flex; gap: 6px; }
-.neg-mini-btn { flex: 1; padding: 7px; border-radius: 8px; border: 1.5px solid var(--gold); background: var(--gold-bg); color: #8B6F47; font-size: .72rem; font-style: italic; font-weight: 700; cursor: pointer; font-family: inherit; }
-.neg-strategy { background: var(--gold-bg); border-radius: 10px; padding: 9px 11px; margin-bottom: 9px; border-left: 3px solid var(--gold); font-size: .75rem; font-style: italic; color: #8B6F47; line-height: 1.5; }
-.safety-banner { background: #FEF3C7; border: 1.5px solid #F59E0B; border-radius: 12px; padding: 12px 14px; margin: 10px 0; font-size: .75rem; font-style: italic; color: #92400E; line-height: 1.55; }
-.safety-banner strong { color: #78350F; }
+
+/* ── MODALS ── */
+.overlay {
+position: fixed; inset: 0; background: rgba(28,43,46,.45);
+backdrop-filter: blur(6px); z-index: 200;
+display: none; align-items: flex-end; justify-content: center;
+}
+.overlay.on { display: flex; }
+.modal {
+background: var(--surface); border-radius: 24px 24px 0 0;
+border: 1px solid var(--border);
+padding: 22px 18px 40px; width: 100%; max-width: 480px;
+animation: sup .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes sup { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.mbar { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 18px; }
+.mtitle {
+font-family: 'Times New Roman', serif;
+font-size: 1.1rem; font-weight: 700; font-style: italic; margin-bottom: 5px;
+background: linear-gradient(110deg,var(--bubble-deep),var(--sage-deep));
+-webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.msub {
+font-family: 'Times New Roman', serif;
+font-size: .77rem; font-style: italic; color: var(--muted); margin-bottom: 13px; line-height: 1.55;
+}
+.mnote {
+background: var(--blush); border: 1px solid var(--bubblegum);
+border-radius: 10px; padding: 10px 12px; margin-bottom: 11px;
+font-family: 'Times New Roman', serif; font-size: .72rem; font-style: italic; color: var(--bubble-deep); line-height: 1.5;
+}
+.minput {
+width: 100%; background: var(--bg); border: 1.5px solid var(--ice-deep);
+border-radius: 12px; padding: 12px 13px; margin-bottom: 9px;
+font-family: 'Times New Roman', serif; font-size: .85rem; font-style: italic; color: var(--text);
+}
+.minput:focus { outline: none; border-color: var(--sage); }
+.minput::placeholder { color: var(--muted); font-style: italic; }
+.mbtn {
+width: 100%; padding: 13px; border: none; border-radius: 14px; margin-bottom: 7px;
+font-family: 'Times New Roman', serif; font-size: .95rem; font-style: italic; font-weight: 700;
+cursor: pointer; transition: all .2s;
+}
+.mbtn:hover { opacity: .88; transform: translateY(-1px); }
+.mcancel {
+width: 100%; padding: 11px; border: 1.5px solid var(--ice-deep); border-radius: 14px;
+background: transparent; color: var(--muted);
+font-family: 'Times New Roman', serif; font-size: .82rem; font-style: italic; cursor: pointer; transition: all .2s;
+}
+.mcancel:hover { color: var(--text); border-color: var(--sage); }
+
+/* ── PROFILE BUTTON IN HEADER ── */
+.profile-btn {
+display: flex; align-items: center; gap: 6px;
+padding: 7px 12px; cursor: pointer;
+background: var(--surface); border: 1.5px solid var(--ice);
+border-radius: 20px; transition: all .2s; margin-right: 8px;
+font-family: 'Times New Roman', Times, serif;
+font-size: .78rem; font-style: italic; color: var(--muted);
+}
+.profile-btn:hover { border-color: var(--sage); color: var(--sage-deep); }
+.profile-btn.set { background: var(--ice); border-color: var(--sage-deep); color: var(--sage-deep); }
+.header-actions { display: flex; align-items: center; }
+
+/* ── GENDER + SIZE SELECTORS (split row) ── */
+.split-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.split-row .col .sh { margin-top: 0; }
+
+/* ── NOTES TEXTAREA + MIC ── */
+.notes-wrap { position: relative; }
+.notes {
+width: 100%; min-height: 76px; resize: vertical;
+background: var(--surface); border: 1.5px solid var(--ice-deep);
+border-radius: 14px; padding: 12px 44px 12px 14px;
+font-family: 'Times New Roman', Times, serif;
+font-size: .85rem; font-style: italic; color: var(--text); line-height: 1.5;
+}
+.notes:focus { outline: none; border-color: var(--sage); }
+.notes::placeholder { color: var(--muted); font-style: italic; }
+.mic-btn {
+position: absolute; top: 9px; right: 9px;
+width: 32px; height: 32px; border-radius: 50%;
+border: 1.5px solid var(--ice-deep); background: var(--surface);
+display: flex; align-items: center; justify-content: center;
+cursor: pointer; transition: all .2s; font-size: 1rem;
+}
+.mic-btn:hover { border-color: var(--sage); }
+.mic-btn.recording { background: var(--bubble-deep); border-color: var(--bubble-deep); color: #fff; animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+
+/* ── OVERRIDE PANEL (per-item override link) ── */
+.override-link {
+display: inline-flex; align-items: center; gap: 4px; margin-top: 6px;
+font-family: 'Times New Roman', serif;
+font-size: .72rem; font-style: italic; color: var(--bubble-deep);
+cursor: pointer; user-select: none;
+}
+.override-link:hover { color: var(--velvet); }
+.override-panel {
+display: none; margin-top: 10px;
+background: var(--blush); border: 1.5px solid var(--bubblegum);
+border-radius: 12px; padding: 12px 14px;
+}
+.override-panel.open { display: block; animation: fi .2s ease; }
+.override-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
+.override-row + .override-row { border-top: 1px solid rgba(224,96,144,.18); }
+.override-row .lbl {
+font-family: 'Times New Roman', serif;
+font-size: .77rem; font-style: italic; color: var(--velvet);
+}
+.toggle {
+width: 38px; height: 22px; border-radius: 11px;
+background: var(--surface); border: 1.5px solid var(--ice-deep);
+position: relative; cursor: pointer; transition: all .2s;
+}
+.toggle::after {
+content: ''; position: absolute; top: 1px; left: 1px;
+width: 18px; height: 18px; border-radius: 50%;
+background: var(--muted); transition: all .2s;
+}
+.toggle.on { background: var(--sage); border-color: var(--sage-deep); }
+.toggle.on::after { left: 18px; background: var(--surface); }
+
+/* ── PAYMENT REQUEST POPOVER ── */
+.pay-card {
+margin-top: 10px; background: var(--ice); border: 1.5px solid var(--ice-deep);
+border-radius: 12px; padding: 10px 12px;
+}
+.pay-head {
+font-family: 'Times New Roman', serif;
+font-size: .65rem; font-style: italic; letter-spacing: 1.5px;
+color: var(--sage-deep); margin-bottom: 6px;
+}
+.pay-line {
+font-family: 'Times New Roman', serif;
+font-size: .8rem; font-style: italic; color: var(--text);
+line-height: 1.5; word-break: break-word;
+}
+.pay-btn {
+display: inline-flex; align-items: center; gap: 4px; margin-top: 8px;
+background: var(--sage-deep); color: #fff; border: none; border-radius: 16px;
+padding: 6px 12px;
+font-family: 'Times New Roman', serif; font-size: .7rem; font-style: italic; font-weight: 700;
+cursor: pointer; transition: all .2s;
+}
+.pay-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+/* ── DUAL PRICE (local + shipped) ── */
+.dual-price { display: flex; flex-direction: column; gap: 4px; }
+.dual-price .pp-row { display: flex; align-items: baseline; gap: 8px; }
+.dual-price .pp-lbl {
+font-family: 'Times New Roman', serif;
+font-size: .58rem; font-style: italic; letter-spacing: 1.5px;
+color: var(--muted); text-transform: uppercase; min-width: 56px;
+}
+.dual-price .pp-val {
+font-family: 'Times New Roman', serif;
+font-size: 1.7rem; font-weight: 700; font-style: italic; line-height: 1;
+background: linear-gradient(120deg, var(--bubble-deep) 0%, var(--sage-deep) 100%);
+-webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.dual-price .pp-val.shipped {
+font-size: 1.15rem;
+background: linear-gradient(120deg, var(--velvet) 0%, var(--sage-deep) 100%);
+-webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+/* ── PROFILE SHEET (full modal) ── */
+.profile-sheet { max-height: 88vh; overflow-y: auto; padding-bottom: 24px; }
+.profile-sheet .field-grp { margin-bottom: 14px; }
+.profile-sheet .field-lbl {
+display: block;
+font-family: 'Times New Roman', serif;
+font-size: .7rem; font-style: italic; letter-spacing: 1px;
+color: var(--muted); margin-bottom: 6px; text-transform: uppercase;
+}
+.profile-sheet .seg {
+display: flex; gap: 6px; flex-wrap: wrap;
+}
+.profile-sheet .seg-opt {
+flex: 1 1 auto; min-width: 0;
+padding: 8px 12px; border: 1.5px solid var(--ice-deep); border-radius: 16px;
+background: var(--surface); color: var(--muted); cursor: pointer;
+font-family: 'Times New Roman', serif; font-size: .78rem; font-style: italic;
+text-align: center; transition: all .2s; white-space: nowrap;
+}
+.profile-sheet .seg-opt.on { background: var(--ice); border-color: var(--sage-deep); color: var(--sage-deep); }
+.profile-sheet .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.profile-sheet .pay-grid .seg-opt { font-size: .72rem; }
+.profile-sheet .toggle-row {
+display: flex; align-items: center; justify-content: space-between;
+padding: 10px 0; border-top: 1px solid var(--border);
+}
+.profile-sheet .toggle-row:first-of-type { border-top: none; }
+.profile-sheet .toggle-row .lbl {
+font-family: 'Times New Roman', serif;
+font-size: .85rem; font-style: italic; color: var(--text);
+}
+
+/* ── COMING SOON BADGE ── */
+.badge.soon { background: var(--blush); color: var(--velvet); border: 1px solid var(--blush-deep); }
+
+/* ── CITY HASHTAG INDICATOR ── */
+.city-hashtag {
+background: var(--blush); color: var(--velvet);
+border-color: var(--blush-deep) !important;
+}
 </style>
+
 </head>
 <body>
 
 <header>
   <div class="logo-wrap">
-    <div class="logo">DropMyFit</div>
-    <div class="logo-sub">prototype · for testing only</div>
+    <div class="logo"><span class="w1">drop</span><span class="w2">my</span><span class="w3">fit</span></div>
+    <div class="logo-sub">AI writes it. You tap once. It's live.</div>
   </div>
-  <div class="pro-pill" id="draftsBtn" onclick="openDrafts()" style="display:none;">
-    <span style="font-size:.9rem;">📁</span><span id="draftsCount">0</span>
+  <div class="header-actions">
+    <div class="profile-btn" id="profileBtn" onclick="openProfile()">
+      <span style="font-size:.95rem">👤</span><span id="profileLbl">Profile</span>
+    </div>
+    <div class="pro-pill" id="proBtn" onclick="togglePro()">
+      <div class="dot"></div><span id="proLbl">Free</span>
+    </div>
   </div>
 </header>
 
 <main>
-  <div class="safety-banner">
-    <strong>⚠️ Prototype notice:</strong> This is a test version. Don't enter sensitive info. If meeting buyers in person, always meet in a public place during daylight, bring a friend, and tell someone where you'll be.
-  </div>
 
   <div class="sh">your item</div>
   <div class="upload" id="zone" onclick="openPicker()">
     <div class="uph" id="uph">
       <span class="uico">🧥</span>
-      <div class="utitle">Tap to add photos</div>
+      <div class="utitle">Tap to snap or upload</div>
       <div class="uhint">Add up to 5 — front, back, tag, flaws</div>
     </div>
+    <button class="cpill" onclick="event.stopPropagation();openPicker()">+ add more</button>
   </div>
   <div class="thumbs" id="thumbs"></div>
-  <input type="file" id="fi" accept="image/*" capture="environment" multiple>
+  <input type="file" id="fi" accept="image/*" multiple>
 
-  <div class="sh">details (optional)</div>
-  <div class="meta-grid">
-    <input class="meta-input" id="mBrand" placeholder="Brand (e.g. Levi's)" />
-    <input class="meta-input" id="mSize" placeholder="Size (e.g. M, 27)" />
+  <div class="split-row">
+    <div class="col">
+      <div class="sh">gender</div>
+      <div class="chips" id="genderChips">
+        <div class="chip on" onclick="setGender(this,'women')">Women's</div>
+        <div class="chip" onclick="setGender(this,'men')">Men's</div>
+        <div class="chip" onclick="setGender(this,'unisex')">Unisex</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="sh">size</div>
+      <div class="chips" id="sizeChips">
+        <div class="chip" onclick="setSize(this,'XS')">XS</div>
+        <div class="chip" onclick="setSize(this,'S')">S</div>
+        <div class="chip on" onclick="setSize(this,'M')">M</div>
+        <div class="chip" onclick="setSize(this,'L')">L</div>
+        <div class="chip" onclick="setSize(this,'XL')">XL</div>
+        <div class="chip" onclick="setSize(this,'?')">Not sure</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh">your notes <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:.65rem;margin-left:6px">(things only you know)</span></div>
+  <div class="notes-wrap">
+    <textarea class="notes" id="notes" placeholder="Smoke-free home, worn twice, runs small, from my Tokyo trip..."></textarea>
+    <button class="mic-btn" id="micBtn" onclick="toggleDictation()" title="Voice dictation">🎙️</button>
+  </div>
+  <div class="override-link" onclick="toggleOverride()">⚙️ Override profile for this item</div>
+  <div class="override-panel" id="overridePanel">
+    <div class="override-row">
+      <div class="lbl">Mention smoke-free / pet-free</div>
+      <div class="toggle on" id="ovSmoke" onclick="ovToggle('ovSmoke')"></div>
+    </div>
+    <div class="override-row">
+      <div class="lbl">Local pickup only (no shipping)</div>
+      <div class="toggle" id="ovLocal" onclick="ovToggle('ovLocal')"></div>
+    </div>
+    <div class="override-row">
+      <div class="lbl">Shipping only (no pickup)</div>
+      <div class="toggle" id="ovShip" onclick="ovToggle('ovShip')"></div>
+    </div>
   </div>
 
   <div class="sh">condition</div>
@@ -259,23 +730,69 @@ main { max-width: 480px; margin: 0 auto; padding: 0 16px 100px; position: relati
 
   <div class="sh">post to</div>
   <div class="pltgrid">
-    <div class="plt on" data-p="fb" onclick="togglePlt(this)"><span class="pico">🛒</span><div><div class="pn">Facebook</div><div class="psub">Marketplace</div></div><div class="pck">✓</div></div>
-    <div class="plt on" data-p="ig" onclick="togglePlt(this)"><span class="pico">📸</span><div><div class="pn">Instagram</div><div class="psub">Feed</div></div><div class="pck">✓</div></div>
-    <div class="plt on" data-p="tt" onclick="togglePlt(this)"><span class="pico">🎵</span><div><div class="pn">TikTok</div><div class="psub">Caption</div></div><div class="pck">✓</div></div>
-    <div class="plt on" data-p="snap" onclick="togglePlt(this)"><span class="pico">👻</span><div><div class="pn">Snapchat</div><div class="psub">Story</div></div><div class="pck">✓</div></div>
-    <div class="plt on wide" data-p="tts" onclick="togglePlt(this)"><span class="pico">🛍️</span><div><div class="pn">TikTok Shop</div><div class="psub">Shoppable listing</div></div><div class="pck">✓</div></div>
+    <div class="plt fb on" data-p="fb" onclick="togglePlt(this)">
+      <span class="pico">🛒</span>
+      <div><div class="pn">Facebook</div><div class="psub">Marketplace</div></div>
+      <div class="pck">✓</div>
+    </div>
+    <div class="plt ig on" data-p="ig" onclick="togglePlt(this)">
+      <span class="pico">📸</span>
+      <div><div class="pn">Instagram</div><div class="psub">Feed + Stories</div></div>
+      <div class="pck">✓</div>
+    </div>
+    <div class="plt tt on" data-p="tt" onclick="togglePlt(this)">
+      <span class="pico">🎵</span>
+      <div><div class="pn">TikTok</div><div class="psub">Caption + hashtags</div></div>
+      <div class="pck">✓</div>
+    </div>
+    <div class="plt snap on" data-p="snap" onclick="togglePlt(this)">
+      <span class="pico">👻</span>
+      <div><div class="pn">Snapchat</div><div class="psub">Story overlay</div></div>
+      <div class="pck">✓</div>
+    </div>
+    <div class="plt tts on wide" data-p="tts" onclick="togglePlt(this)">
+      <span class="pico">🛍️</span>
+      <div><div class="pn">TikTok Shop</div><div class="psub">Shoppable listing with optimised pricing</div></div>
+      <div class="pck">✓</div>
+    </div>
   </div>
 
-  <button class="gen" id="genBtn" onclick="generate()" disabled>✨ Drop My Fit</button>
+  <div class="pro-panel" id="proPanel">
+    <div class="pro-note">Power Seller tier — direct API auto-post (Phase 2). Coming soon.</div>
+    <div class="api-row" id="igRow">
+      <div class="al">
+        <span class="al-ico">📸</span>
+        <div><div class="al-name">Instagram Auto-Post</div><div class="al-sub">Business or Creator account · Phase 2</div></div>
+        <div class="adot"></div>
+      </div>
+      <button class="abtn done">Coming Soon</button>
+    </div>
+    <div class="api-row" id="ttRow">
+      <div class="al">
+        <span class="al-ico">🎵</span>
+        <div><div class="al-name">TikTok + Shop</div><div class="al-sub">Content Posting API · Phase 2</div></div>
+        <div class="adot"></div>
+      </div>
+      <button class="abtn done">Coming Soon</button>
+    </div>
+  </div>
+
+<button class="gen" id="genBtn" onclick="generate()" disabled>✨ Drop My Fit</button>
+
   <div class="loader" id="loader"><div class="lbar"></div></div>
   <div class="ltxt" id="ltxt">Analysing your fit…</div>
   <div class="errbox" id="errbox"></div>
 
+  <!-- ══ RESULTS ══ -->
+
   <div class="results" id="results">
+
     <div class="sh">price check</div>
     <div class="pcard">
-      <div>
-        <div class="plbl">suggested price</div>
+      <div class="dual-price" id="dualPrice">
+        <div class="pp-row">
+          <div class="plbl">suggested price</div>
+        </div>
         <div class="pval" id="pval">$—</div>
         <div class="prng" id="prng">Range: —</div>
       </div>
@@ -284,89 +801,266 @@ main { max-width: 480px; margin: 0 auto; padding: 0 16px 100px; position: relati
 
     <div class="sh">your listings</div>
     <div class="tabs" id="tabs">
-      <div class="tab on" id="t-fb" onclick="showTab('fb')">🛒 Facebook</div>
-      <div class="tab" id="t-ig" onclick="showTab('ig')">📸 Instagram</div>
-      <div class="tab" id="t-tt" onclick="showTab('tt')">🎵 TikTok</div>
-      <div class="tab" id="t-snap" onclick="showTab('snap')">👻 Snap</div>
-      <div class="tab" id="t-tts" onclick="showTab('tts')">🛍️ Shop</div>
+      <div class="tab on" id="t-fb"   onclick="showTab('fb')">🛒 Facebook</div>
+      <div class="tab"    id="t-ig"   onclick="showTab('ig')">📸 Instagram</div>
+      <div class="tab"    id="t-tt"   onclick="showTab('tt')">🎵 TikTok</div>
+      <div class="tab"    id="t-snap" onclick="showTab('snap')">👻 Snap</div>
+      <div class="tab"    id="t-tts"  onclick="showTab('tts')">🛍️ Shop</div>
     </div>
 
+    <!-- Facebook -->
     <div class="card" id="c-fb">
       <div class="ch"><span class="cico">🛒</span><span class="cname">Facebook Marketplace</span><span class="badge dl">Deep-Link</span></div>
-      <div class="cb"><div class="ctitle" id="fb-t">—</div><div class="cdesc" id="fb-d">—</div></div>
-      <div class="actions"><button class="btn btn-ghost" onclick="copy('fb')">📋 Copy</button><button class="btn btn-fb" onclick="goFB()">🛒 Open FB</button></div>
+      <div class="cb">
+        <div class="ctitle" id="fb-t">—</div>
+        <div class="cdesc" id="fb-d">—</div>
+        <div class="pay-card" id="fb-pay" style="display:none">
+          <div class="pay-head">payment request</div>
+          <div class="pay-line" id="fb-pay-line">—</div>
+          <button class="pay-btn" onclick="copyPay()">📋 Copy payment line</button>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="copy('fb')">📋 Copy</button>
+        <button class="btn btn-fb"    onclick="goFB()">🛒 Open FB</button>
+      </div>
     </div>
+
+    <!-- Instagram -->
     <div class="card" id="c-ig" style="display:none">
-      <div class="ch"><span class="cico">📸</span><span class="cname">Instagram</span><span class="badge dl">Deep-Link</span></div>
+      <div class="ch"><span class="cico">📸</span><span class="cname">Instagram</span><span class="badge dl" id="ig-bdg">Share Sheet</span></div>
       <div class="cb"><div class="ctitle" id="ig-t">—</div><div class="cdesc" id="ig-d">—</div><div class="htags" id="ig-tags"></div></div>
-      <div class="actions"><button class="btn btn-ghost" onclick="copy('ig')">📋 Copy</button><button class="btn btn-ig" onclick="goIG()">📸 Open Insta</button></div>
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="copy('ig')">📋 Copy</button>
+        <button class="btn btn-ig" id="ig-act" onclick="postIG()">📸 Share to Insta</button>
+      </div>
     </div>
+
+    <!-- TikTok -->
     <div class="card" id="c-tt" style="display:none">
-      <div class="ch"><span class="cico">🎵</span><span class="cname">TikTok</span><span class="badge dl">Deep-Link</span></div>
+      <div class="ch"><span class="cico">🎵</span><span class="cname">TikTok</span><span class="badge dl" id="tt-bdg">Share Sheet</span></div>
       <div class="cb"><div class="ctitle" id="tt-t">—</div><div class="cdesc" id="tt-d">—</div><div class="htags" id="tt-tags"></div></div>
-      <div class="actions"><button class="btn btn-ghost" onclick="copy('tt')">📋 Copy</button><button class="btn btn-tt" onclick="goTT()">🎵 Open TikTok</button></div>
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="copy('tt')">📋 Copy</button>
+        <button class="btn btn-tt" id="tt-act" onclick="postTT()">🎵 Share to TikTok</button>
+      </div>
     </div>
+
+    <!-- Snapchat -->
     <div class="card" id="c-snap" style="display:none">
-      <div class="ch"><span class="cico">👻</span><span class="cname">Snapchat</span><span class="badge dl">Deep-Link</span></div>
+      <div class="ch"><span class="cico">👻</span><span class="cname">Snapchat</span><span class="badge dl">Share Sheet</span></div>
       <div class="cb"><div class="ctitle" id="snap-t">—</div><div class="cdesc" id="snap-d">—</div><div class="htags" id="snap-tags"></div></div>
-      <div class="actions"><button class="btn btn-ghost" onclick="copy('snap')">📋 Copy</button><button class="btn btn-snap" onclick="goSnap()">👻 Open Snap</button></div>
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="copy('snap')">📋 Copy</button>
+        <button class="btn btn-snap"  onclick="goSnap()">👻 Share to Snap</button>
+      </div>
     </div>
+
+    <!-- TikTok Shop -->
     <div class="card" id="c-tts" style="display:none">
-      <div class="ch"><span class="cico">🛍️</span><span class="cname">TikTok Shop</span><span class="badge dl">Deep-Link</span></div>
-      <div class="cb"><div class="ctitle" id="tts-t">—</div><div class="cdesc" id="tts-d">—</div><div class="htags" id="tts-tags"></div></div>
-      <div class="actions"><button class="btn btn-ghost" onclick="copy('tts')">📋 Copy</button><button class="btn btn-tts" onclick="goTTS()">🛍️ Open Shop</button></div>
+      <div class="ch"><span class="cico">🛍️</span><span class="cname">TikTok Shop</span><span class="badge dl" id="tts-bdg">Deep-Link</span></div>
+      <div class="cb">
+        <div class="ctitle" id="tts-t">—</div>
+        <div class="cdesc"  id="tts-d">—</div>
+        <div class="tts-block">
+          <div class="tts-head">🛍️ Recommended Shop Price</div>
+          <div class="tts-price" id="tts-price">—</div>
+          <div class="tts-note"  id="tts-note">—</div>
+          <button class="tts-btn" onclick="goTTS()">List on TikTok Shop →</button>
+        </div>
+        <div class="htags" id="tts-tags"></div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="copy('tts')">📋 Copy</button>
+        <button class="btn btn-tts" id="tts-act" onclick="goTTS()">🛍️ Open TikTok Shop</button>
+      </div>
     </div>
 
     <div class="sh">tips</div>
-    <div class="tips"><div class="tips-head">from the AI</div><div id="tips"></div></div>
-
-    <button class="gen" onclick="saveDraft()" style="margin-top:6px;background:linear-gradient(115deg,var(--ice-deep),var(--sage));">💾 Save as Draft</button>
-
-    <div class="sh">AI negotiator</div>
-    <div class="neg-card">
-      <div class="neg-head"><div class="neg-ico">🤝</div><div><div class="neg-title">Buyer DM Assistant</div><div class="neg-sub">Paste a buyer's message — get a smart reply</div></div></div>
-      <div class="neg-rules">
-        <input class="neg-input" id="negMin" type="number" placeholder="Min price ($)">
-        <input class="neg-input" id="negPickup" placeholder="Pickup area">
-      </div>
-      <div class="neg-rules">
-        <input class="neg-input" id="negPay" placeholder="Payment (Venmo, etc)">
-        <select class="neg-input" id="negTone">
-          <option value="friendly">Friendly tone</option>
-          <option value="firm">Firm tone</option>
-          <option value="chill">Chill tone</option>
-          <option value="professional">Professional tone</option>
-        </select>
-      </div>
-      <textarea class="neg-textarea" id="negMsg" placeholder="Paste the buyer's message here"></textarea>
-      <button class="neg-btn" id="negBtn" onclick="negotiate()">💬 Draft Smart Replies</button>
-      <div class="neg-replies" id="negReplies"></div>
+    <div class="tips">
+      <div class="tips-head">from the AI</div>
+      <div id="tips"></div>
     </div>
+
   </div>
 </main>
 
 <div class="toast" id="toast"></div>
 
+<!-- Profile Sheet -->
+
+<div class="overlay" id="profileM">
+  <div class="modal profile-sheet">
+    <div class="mbar"></div>
+    <div class="mtitle">👤 Your seller profile</div>
+    <div class="msub">A one-time setup that makes every listing sound like you, not like AI. Stored on this device only.</div>
+
+    <div class="field-grp">
+      <label class="field-lbl">Vibe</label>
+      <div class="seg" id="vibeSeg">
+        <div class="seg-opt" data-v="y2k">Y2K</div>
+        <div class="seg-opt" data-v="vintage">Vintage</div>
+        <div class="seg-opt" data-v="aesthetic">Aesthetic</div>
+        <div class="seg-opt" data-v="streetwear">Streetwear</div>
+        <div class="seg-opt" data-v="minimal">Minimal</div>
+        <div class="seg-opt" data-v="festival">Festival</div>
+      </div>
+    </div>
+
+    <div class="field-grp">
+      <label class="field-lbl">City <span style="color:var(--bubble-deep)">*</span></label>
+      <input class="minput" type="text" id="profCity" placeholder="e.g. Toronto, Brooklyn, Manchester">
+    </div>
+
+    <div class="field-grp">
+      <label class="field-lbl">Pickup vs shipping</label>
+      <div class="seg" id="logSeg">
+        <div class="seg-opt" data-v="local">Pickup only</div>
+        <div class="seg-opt on" data-v="both">Both</div>
+        <div class="seg-opt" data-v="ship">Shipped only</div>
+      </div>
+    </div>
+
+    <div class="field-grp">
+      <label class="field-lbl">Payment methods</label>
+      <div class="seg pay-grid" id="paySeg">
+        <div class="seg-opt" data-v="etransfer">E-transfer</div>
+        <div class="seg-opt" data-v="venmo">Venmo</div>
+        <div class="seg-opt" data-v="zelle">Zelle</div>
+        <div class="seg-opt" data-v="cashapp">Cash App</div>
+        <div class="seg-opt" data-v="paypal">PayPal F&amp;F</div>
+        <div class="seg-opt" data-v="cash">Cash</div>
+      </div>
+      <input class="minput" type="text" id="profPayHandle" placeholder="Payment handle (email, @username) — optional" style="margin-top:8px">
+    </div>
+
+    <div class="field-grp">
+      <div class="toggle-row">
+        <div class="lbl">Smoke-free / pet-free home</div>
+        <div class="toggle on" id="profSmoke" onclick="profToggle('profSmoke')"></div>
+      </div>
+    </div>
+
+    <button class="mbtn" style="background:linear-gradient(135deg,var(--bubblegum),var(--sage));color:var(--text)" onclick="saveProfile()">Save profile</button>
+    <button class="mcancel" onclick="closeM('profileM')">close</button>
+  </div>
+</div>
+
 <script>
-// REPLACE THIS with your deployed Cloudflare Worker URL
-const API_URL = 'https://dropmyfit-api.dropmyfit.workers.dev';
+/* ════════════════════════════════════════════════════════════
+   DropMyFit — Phase 0 prototype
+   Architecture: Share Sheet over API. ToS-compliant.
 
-const S = { photos: [], cond: 'New with tags', data: null, tab: 'fb', plts: new Set(['fb','ig','tt','snap','tts']) };
+   ⚠️ BACKEND PROXY REQUIRED:
+   The /api/generate endpoint must be a Cloudflare Worker that:
+     1. Receives { image_b64, prompt, profile, item }
+     2. Forwards to Anthropic API with the API key as a Worker secret
+        (set with: wrangler secret put ANTHROPIC_API_KEY)
+     3. Returns the JSON response
+   Deploy the Worker on the same domain (or with proper CORS) so this
+   page can fetch '/api/generate' relatively. Until the Worker is
+   deployed, set DEMO_MODE = true below to use a local stub response.
+   ════════════════════════════════════════════════════════════ */
+
+const DEMO_MODE = false;       // flip to true for local UI testing without a Worker
+const API_ENDPOINT = 'https://dropmyfit-api.dropmyfit.workers.dev';
+
 const MAX_PHOTOS = 5;
+const S = {
+  photos: [],
+  cond: 'New with tags',
+  gender: 'women',
+  size: 'M',
+  notes: '',
+  pro: false,
+  data: null,
+  tab: 'fb',
+  plts: new Set(['fb','ig','tt','snap','tts']),
+  // Per-item overrides (default to profile)
+  override: { smoke: true, local: false, ship: false },
+  // Profile (loaded from localStorage)
+  profile: {
+    vibe: null,
+    city: '',
+    logistics: 'both',         // 'local' | 'both' | 'ship'
+    payments: [],              // ['etransfer', 'venmo', ...]
+    payHandle: '',
+    smokeFree: true,
+  },
+};
 
-async function callAPI(messages, maxTokens = 1500) {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: maxTokens, messages })
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || `API error ${res.status}`);
-  }
-  return res.json();
+const PROFILE_KEY = 'dmf_profile_v1';
+
+/* ── PROFILE PERSISTENCE ── */
+function loadProfile(){
+  try {
+    const raw = localStorage.getItem(PROFILE_KEY);
+    if (raw) {
+      const p = JSON.parse(raw);
+      S.profile = { ...S.profile, ...p };
+      // Sync UI
+      if (p.vibe) document.querySelectorAll('#vibeSeg .seg-opt').forEach(o => o.classList.toggle('on', o.dataset.v === p.vibe));
+      if (p.city) document.getElementById('profCity').value = p.city;
+      if (p.logistics) document.querySelectorAll('#logSeg .seg-opt').forEach(o => o.classList.toggle('on', o.dataset.v === p.logistics));
+      if (Array.isArray(p.payments)) document.querySelectorAll('#paySeg .seg-opt').forEach(o => o.classList.toggle('on', p.payments.includes(o.dataset.v)));
+      if (p.payHandle) document.getElementById('profPayHandle').value = p.payHandle;
+      document.getElementById('profSmoke').classList.toggle('on', p.smokeFree !== false);
+      // Override defaults reflect profile
+      S.override.smoke = p.smokeFree !== false;
+      S.override.local = p.logistics === 'local';
+      S.override.ship  = p.logistics === 'ship';
+      syncOverrideUI();
+      // Set profile button as configured
+      if (p.city) {
+        document.getElementById('profileBtn').classList.add('set');
+        document.getElementById('profileLbl').textContent = p.city;
+      }
+    }
+  } catch(e) { console.warn('Profile load failed', e); }
 }
+function saveProfile(){
+  const city = document.getElementById('profCity').value.trim();
+  if (!city) { toast('City is required'); return; }
+  const vibe = document.querySelector('#vibeSeg .seg-opt.on')?.dataset.v || null;
+  const logistics = document.querySelector('#logSeg .seg-opt.on')?.dataset.v || 'both';
+  const payments = [...document.querySelectorAll('#paySeg .seg-opt.on')].map(o => o.dataset.v);
+  const payHandle = document.getElementById('profPayHandle').value.trim();
+  const smokeFree = document.getElementById('profSmoke').classList.contains('on');
+  S.profile = { vibe, city, logistics, payments, payHandle, smokeFree };
+  // Update overrides to match new profile
+  S.override.smoke = smokeFree;
+  S.override.local = logistics === 'local';
+  S.override.ship  = logistics === 'ship';
+  syncOverrideUI();
+  try { localStorage.setItem(PROFILE_KEY, JSON.stringify(S.profile)); } catch(e){}
+  document.getElementById('profileBtn').classList.add('set');
+  document.getElementById('profileLbl').textContent = city;
+  closeM('profileM');
+  toast('Profile saved');
+}
+function openProfile(){ openM('profileM'); }
 
+/* ── PROFILE SHEET TOGGLES ── */
+function profToggle(id){ document.getElementById(id).classList.toggle('on'); }
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Single-select segments
+  ['#vibeSeg', '#logSeg'].forEach(sel => {
+    document.querySelectorAll(`${sel} .seg-opt`).forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll(`${sel} .seg-opt`).forEach(o => o.classList.remove('on'));
+        opt.classList.add('on');
+      });
+    });
+  });
+  // Multi-select payment segment
+  document.querySelectorAll('#paySeg .seg-opt').forEach(opt => {
+    opt.addEventListener('click', () => opt.classList.toggle('on'));
+  });
+  loadProfile();
+});
+
+/* ── UPLOAD (multi-photo) ── */
 function openPicker(){ document.getElementById('fi').click(); }
 document.getElementById('fi').onchange = function(e){
   const files = Array.from(e.target.files || []);
@@ -374,146 +1068,478 @@ document.getElementById('fi').onchange = function(e){
   const slots = MAX_PHOTOS - S.photos.length;
   files.slice(0, slots).forEach(f => {
     const r = new FileReader();
-    r.onload = ev => { S.photos.push({ b64: ev.target.result.split(',')[1], url: ev.target.result }); renderThumbs(); };
+    r.onload = ev => {
+      const url = ev.target.result;
+      S.photos.push({ b64: url.split(',')[1], url });
+      renderThumbs();
+    };
     r.readAsDataURL(f);
   });
   e.target.value = '';
 };
-
 function renderThumbs(){
-  const z = document.getElementById('zone'), t = document.getElementById('thumbs');
+  const z = document.getElementById('zone');
+  const t = document.getElementById('thumbs');
   if (S.photos.length === 0){
     z.classList.remove('filled');
-    z.innerHTML = `<div class="uph"><span class="uico">🧥</span><div class="utitle">Tap to add photos</div><div class="uhint">Add up to ${MAX_PHOTOS}</div></div>`;
-    t.innerHTML = ''; document.getElementById('genBtn').disabled = true; return;
+    z.onclick = openPicker;
+    z.innerHTML = `<div class="uph" id="uph"><span class="uico">🧥</span><div class="utitle">Tap to snap or upload</div><div class="uhint">Add up to ${MAX_PHOTOS} — front, back, tag, flaws</div></div><button class="cpill" onclick="event.stopPropagation();openPicker()">+ add more</button>`;
+    t.innerHTML = '';
+    document.getElementById('genBtn').disabled = true;
+    return;
   }
   z.classList.add('filled');
-  z.innerHTML = `<img src="${S.photos[0].url}"><button class="cpill" onclick="event.stopPropagation();openPicker()">+ add more</button>`;
-  t.innerHTML = S.photos.map((p,i) => `<div class="thumb"><img src="${p.url}"><button class="x" onclick="event.stopPropagation();rmPhoto(${i})">✕</button></div>`).join('') + (S.photos.length < MAX_PHOTOS ? `<div class="thumb-add" onclick="event.stopPropagation();openPicker()">+</div>` : '');
+  z.onclick = null;
+  z.innerHTML = `<img src="${S.photos[0].url}" alt="fit"><button class="cpill" onclick="event.stopPropagation();openPicker()">+ add more</button>`;
+  t.innerHTML = S.photos.map((p,i) =>
+    `<div class="thumb"><img src="${p.url}"><button class="x" onclick="event.stopPropagation();rmPhoto(${i})">✕</button></div>`
+  ).join('') + (S.photos.length < MAX_PHOTOS
+    ? `<div class="thumb-add" onclick="event.stopPropagation();openPicker()">+</div>`
+    : '');
   document.getElementById('genBtn').disabled = false;
 }
-function rmPhoto(i){ S.photos.splice(i,1); renderThumbs(); }
-function setC(el,v){ document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); S.cond = v; }
-function togglePlt(el){ el.classList.toggle('on'); const p = el.dataset.p; el.classList.contains('on') ? S.plts.add(p) : S.plts.delete(p); }
+function rmPhoto(i){ S.photos.splice(i, 1); renderThumbs(); }
+['dragover','dragleave','drop'].forEach(ev => {
+  document.getElementById('zone').addEventListener(ev, e => {
+    e.preventDefault();
+    if(ev==='dragover') document.getElementById('zone').classList.add('drag');
+    else if(ev==='dragleave') document.getElementById('zone').classList.remove('drag');
+    else {
+      document.getElementById('zone').classList.remove('drag');
+      const files = Array.from(e.dataTransfer.files || []);
+      if(files.length){
+        const dt = new DataTransfer();
+        files.forEach(f => dt.items.add(f));
+        document.getElementById('fi').files = dt.files;
+        document.getElementById('fi').dispatchEvent(new Event('change'));
+      }
+    }
+  });
+});
 
-async function generate(){
-  if (!S.photos.length) return;
-  setLoad(true); hideErr();
-  const ap = [...S.plts];
-  const brand = document.getElementById('mBrand').value.trim();
-  const size = document.getElementById('mSize').value.trim();
-  const prompt = `You are an expert helping young women sell clothes online.
-Condition: ${S.cond}
-${brand ? 'Brand: ' + brand : ''}
-${size ? 'Size: ' + size : ''}
-Platforms: ${ap.join(', ')}
+/* ── CONDITION / GENDER / SIZE ── */
+function setC(el,v){ document.querySelectorAll('.chips')[2].querySelectorAll('.chip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); S.cond=v; }
+function setGender(el,v){ document.querySelectorAll('#genderChips .chip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); S.gender=v; }
+function setSize(el,v){ document.querySelectorAll('#sizeChips .chip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); S.size=v; }
 
-Return ONLY valid JSON:
-{"item":"name","price":28,"priceMin":22,"priceMax":35,"ttsPrice":24,"ttsPriceNote":"...","listings":{"fb":{"title":"...","description":"..."},"ig":{"title":"...","description":"...","hashtags":["#tag"]},"tt":{"title":"...","description":"...","hashtags":["#tag"]},"snap":{"title":"...","description":"...","hashtags":["#tag"]},"tts":{"title":"...","description":"...","hashtags":["#tag"]}},"tips":["t1","t2","t3"]}`;
-  const content = [];
-  S.photos.forEach(p => content.push({ type:'image', source:{ type:'base64', media_type:'image/jpeg', data:p.b64 } }));
-  content.push({ type:'text', text:prompt });
-  try {
-    const d = await callAPI([{ role:'user', content }], 1500);
-    const raw = d.content?.[0]?.text || '';
-    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
-    S.data = parsed; render(parsed, ap); setLoad(false);
-    document.getElementById('results').classList.add('on');
-    setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth'}), 80);
-  } catch(e) { setLoad(false); showErr("Couldn't analyze your fit — " + e.message); }
+/* ── OVERRIDE PANEL ── */
+function toggleOverride(){ document.getElementById('overridePanel').classList.toggle('open'); }
+function ovToggle(id){
+  const el = document.getElementById(id);
+  el.classList.toggle('on');
+  const on = el.classList.contains('on');
+  if (id==='ovSmoke') S.override.smoke = on;
+  if (id==='ovLocal') {
+    S.override.local = on;
+    if (on) { S.override.ship = false; document.getElementById('ovShip').classList.remove('on'); }
+  }
+  if (id==='ovShip') {
+    S.override.ship = on;
+    if (on) { S.override.local = false; document.getElementById('ovLocal').classList.remove('on'); }
+  }
+}
+function syncOverrideUI(){
+  document.getElementById('ovSmoke').classList.toggle('on', !!S.override.smoke);
+  document.getElementById('ovLocal').classList.toggle('on', !!S.override.local);
+  document.getElementById('ovShip').classList.toggle('on', !!S.override.ship);
 }
 
-function render(d, plts){
-  g('pval').textContent = '$' + d.price;
-  g('prng').textContent = `Range: $${d.priceMin} – $${d.priceMax}`;
+/* ── VOICE DICTATION ── */
+let recognition = null;
+let isRecording = false;
+function toggleDictation(){
+  const btn = document.getElementById('micBtn');
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { toast('Voice dictation not supported on this browser'); return; }
+  if (isRecording) {
+    recognition?.stop();
+    return;
+  }
+  recognition = new SR();
+  recognition.continuous = true;
+  recognition.interimResults = false;
+  recognition.lang = 'en-US';
+  recognition.onresult = (e) => {
+    const ta = document.getElementById('notes');
+    let txt = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      txt += e.results[i][0].transcript + ' ';
+    }
+    ta.value = (ta.value + ' ' + txt).trim();
+    S.notes = ta.value;
+  };
+  recognition.onstart = () => { isRecording = true; btn.classList.add('recording'); };
+  recognition.onend   = () => { isRecording = false; btn.classList.remove('recording'); };
+  recognition.onerror = (e) => { isRecording = false; btn.classList.remove('recording'); toast('Voice error: '+e.error); };
+  recognition.start();
+}
+document.addEventListener('input', (e) => { if (e.target?.id === 'notes') S.notes = e.target.value; });
+
+/* ── PLATFORMS ── */
+function togglePlt(el){
+  el.classList.toggle('on');
+  const p=el.dataset.p;
+  el.classList.contains('on') ? S.plts.add(p) : S.plts.delete(p);
+}
+
+/* ── PRO ── */
+function togglePro(){
+  S.pro=!S.pro;
+  document.getElementById('proBtn').classList.toggle('on',S.pro);
+  document.getElementById('proLbl').textContent=S.pro?'Pro':'Free';
+  document.getElementById('proPanel').classList.toggle('open',S.pro);
+}
+function openM(id){ document.getElementById(id).classList.add('on'); }
+function closeM(id){ document.getElementById(id).classList.remove('on'); }
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on');}));
+
+/* ── TABS ── */
+function showTab(t){
+  S.tab=t;
+  ['fb','ig','tt','snap','tts'].forEach(k=>{
+    document.getElementById('t-'+k)?.classList.toggle('on',k===t);
+    const c=document.getElementById('c-'+k);
+    if(c) c.style.display=k===t?'block':'none';
+  });
+}
+
+/* ── PROMPT BUILDER ── */
+function buildPrompt(ap){
+  const p = S.profile;
+  const wantLocal = !S.override.ship;     // unless shipping-only override
+  const wantShipped = !S.override.local;  // unless pickup-only override
+  const showSmoke = !!S.override.smoke;
+  const cityClause = p.city ? `Seller's city: ${p.city}. Use city-specific hashtags where relevant (e.g. #${p.city.toLowerCase().replace(/\s/g,'')}thrift, #${p.city.toLowerCase().replace(/\s/g,'')}vintage). Add "📍 ${p.city}" prefix to social captions where it fits naturally.` : 'No city set — use generic hashtags.';
+  const vibeClause = p.vibe ? `Seller persona/vibe: ${p.vibe}. Match this tone, word choice, emoji density, and hashtag style across every platform.` : 'No specific vibe set — use confident, friendly tone.';
+  const smokeClause = showSmoke ? 'Mention smoke-free / pet-free home in Marketplace descriptions only (never in social captions).' : 'Do not mention smoke-free.';
+  const payList = (p.payments && p.payments.length) ? p.payments.join(', ') : 'cash';
+  const payHandle = p.payHandle ? ` Handle: ${p.payHandle}.` : '';
+  const payClause = `Accepted payment methods: ${payList}.${payHandle} Append payment instructions to Marketplace descriptions only — never to social captions.`;
+  const localClause = (wantLocal && wantShipped)
+    ? 'Generate TWO prices: priceLocal (pickup) and priceShipped (~$8-12 higher to cover postage). Both go in fields below.'
+    : wantLocal
+      ? 'Generate ONE price: priceLocal (pickup only — no shipping). Set priceShipped to null.'
+      : 'Generate ONE price: priceShipped (shipping only — no pickup). Set priceLocal to null.';
+  const notesClause = S.notes ? `Seller's notes (things only they know): "${S.notes.replace(/"/g,'\\"')}"` : '';
+
+  return `You are an expert helping Gen Z and millennial sellers price and list clothes locally and online.
+
+ITEM DETAILS:
+- Gender: ${S.gender}
+- Size: ${S.size}
+- Condition: ${S.cond}
+- Selected platforms: ${ap.join(', ')}
+${notesClause}
+
+SELLER PROFILE:
+- ${cityClause}
+- ${vibeClause}
+- ${smokeClause}
+- ${payClause}
+
+PRICING:
+${localClause}
+
+Return ONLY valid JSON (no markdown, no code fences):
+{
+  "item": "Short item name e.g. 'Vintage Levi's 501s' or 'Y2K Baby Tee'",
+  "priceLocal": 28,
+  "priceShipped": 38,
+  "priceMin": 22,
+  "priceMax": 35,
+  "ttsPrice": 24,
+  "ttsPriceNote": "Slightly lower wins the TikTok Shop algorithm — free fast shipping increases conversions",
+  "paymentLine": "Pay via [method]: [handle]. E-transfer auto-deposit on. — only if seller has handle/methods set",
+  "listings": {
+    "fb": {
+      "title": "Clear Marketplace title — include brand and size if visible",
+      "description": "2-3 paragraphs. Condition details, measurements if guessable, style notes. Include city pickup logistics if local. Append payment line if applicable. End with 'Comment or DM to buy'"
+    },
+    "ig": {
+      "title": "Punchy Instagram caption opener — match the seller's vibe",
+      "description": "3-4 short lines. Include price. End with 'DM to claim'",
+      "hashtags": ["8 hashtags blending broad + niche + city-specific where relevant"]
+    },
+    "tt": {
+      "title": "TikTok hook — first 3 words must stop the scroll",
+      "description": "Max 2 punchy lines. Price visible.",
+      "hashtags": ["6 hashtags blending broad + niche + city-specific"]
+    },
+    "snap": {
+      "title": "Short bold Snap overlay — 5 words max",
+      "description": "1-2 lines max. Price front and centre. Casual tone.",
+      "hashtags": ["3 short hashtags"]
+    },
+    "tts": {
+      "title": "TikTok Shop product title — keyword-rich, brand and style keywords",
+      "description": "Short product description with bullet points using • characters. Condition, size, style keywords.",
+      "hashtags": ["7 TikTok Shop hashtags"]
+    }
+  },
+  "tips": [
+    "Selling tip specific to this exact item",
+    "Which platform will sell it fastest and why",
+    "Photo tip to attract more buyers",
+    "TikTok Shop pricing or listing tip"
+  ]
+}`;
+}
+
+/* ── DEMO STUB (used only when DEMO_MODE = true) ── */
+function demoResponse(ap) {
+  const city = S.profile.city || 'Toronto';
+  const tag = city.toLowerCase().replace(/\s/g,'');
+  const local = !S.override.ship;
+  const ship = !S.override.local;
+  const handle = S.profile.payHandle ? `: ${S.profile.payHandle}` : '';
+  const pay = (S.profile.payments?.[0] || 'e-transfer');
+  return {
+    item: `${S.gender === 'men' ? "Men's" : ''} ${S.cond} top, size ${S.size}`.trim(),
+    priceLocal: local ? 28 : null,
+    priceShipped: ship ? 38 : null,
+    priceMin: 22, priceMax: 35,
+    ttsPrice: 24,
+    ttsPriceNote: 'Slightly lower wins the TikTok Shop algorithm — free fast shipping increases conversions',
+    paymentLine: handle ? `${pay.toUpperCase()}${handle} — auto-deposit on` : '',
+    listings: {
+      fb: { title: `Cute ${S.size} top — ${city} pickup`, description: `${S.cond}. ${S.notes||'Worn lightly.'} ${local?`📍 ${city} pickup`:''} ${ship?'Shipping available':''}.\n\nComment or DM to buy.` },
+      ig: { title: `cleaning out the closet 🧺`, description: `${S.cond} ${S.size}. $${local?28:38} ${local?'pickup':'shipped'}.\n\nDM to claim.`, hashtags: [`#${tag}thrift`, '#thriftfinds', '#y2kfashion', '#depop', '#ootd', '#closetclearout', '#secondhand', '#sustainablefashion'] },
+      tt: { title: `pov: you finally found it`, description: `${S.cond} ${S.size}. $${local?28:38}.`, hashtags: [`#${tag}thrift`, '#thrifttok', '#fashiontiktok', '#y2kfashion', '#ootd', '#closetclearout'] },
+      snap: { title: `for sale 💌`, description: `${S.size} top — $${local?28:38}`, hashtags: ['#thrift', '#fashion', '#forsale'] },
+      tts: { title: `${S.cond} ${S.size} Y2K Top — Vintage Style`, description: `• Size: ${S.size}\n• Condition: ${S.cond}\n• Local pickup or shipped`, hashtags: ['#TikTokShop', '#TikTokMadeMeBuyIt', '#ShopNow', '#thrift', '#y2k', '#fashion', '#ootd'] },
+    },
+    tips: [
+      'Tag your story so friends see it first — the highest-converting buyers',
+      `Local pickup wins on Snap and IG. Shipped wins on TikTok Shop.`,
+      'Try a 3/4 hanging shot on a clean wall — outsells flat-lay 2:1',
+      'TikTok Shop: list at $24 with free shipping → algorithm boost'
+    ]
+  };
+}
+
+/* ── GENERATE ── */
+async function generate(){
+  if(!S.photos.length) return;
+  setLoad(true); hideErr();
+  const ap=[...S.plts];
+  const prompt = buildPrompt(ap);
+
+  try{
+    let parsed;
+    if (DEMO_MODE) {
+      await new Promise(r => setTimeout(r, 900));
+      parsed = demoResponse(ap);
+    } else {
+      // Build content array: every photo, then the prompt text
+      const content = S.photos.map(p => ({
+        type: 'image',
+        source: { type: 'base64', media_type: 'image/jpeg', data: p.b64 }
+      }));
+      content.push({ type: 'text', text: prompt });
+
+      // Calls the Cloudflare Worker proxy. The Worker holds the Anthropic key as a secret.
+      const res = await fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 2000,
+          messages: [{ role: 'user', content }]
+        })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Server returned ${res.status}`);
+      }
+      const d = await res.json();
+      const raw = d.content?.[0]?.text || d.text || '';
+      parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    }
+    S.data = parsed;
+    render(parsed, ap);
+    setLoad(false);
+    document.getElementById('results').classList.add('on');
+    setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),80);
+  }catch(e){
+    setLoad(false);
+    showErr(`Couldn't read your fit — ${e.message}.`);
+  }
+}
+
+/* ── RENDER ── */
+function render(d,plts){
+  // Dual price rendering
+  const dp = g('dualPrice');
+  const hasLocal = d.priceLocal != null;
+  const hasShipped = d.priceShipped != null;
+  let priceHTML = '';
+  if (hasLocal && hasShipped) {
+    priceHTML = `
+      <div class="pp-row"><div class="pp-lbl">pickup</div></div>
+      <div class="pp-val">$${d.priceLocal}</div>
+      <div class="pp-row"><div class="pp-lbl">shipped</div></div>
+      <div class="pp-val shipped">$${d.priceShipped}</div>
+      <div class="prng" id="prng">Range: $${d.priceMin}–$${d.priceMax}</div>`;
+  } else if (hasLocal) {
+    priceHTML = `
+      <div class="pp-row"><div class="plbl">pickup price</div></div>
+      <div class="pval">$${d.priceLocal}</div>
+      <div class="prng">Range: $${d.priceMin}–$${d.priceMax}</div>`;
+  } else if (hasShipped) {
+    priceHTML = `
+      <div class="pp-row"><div class="plbl">shipped price</div></div>
+      <div class="pval">$${d.priceShipped}</div>
+      <div class="prng">Range: $${d.priceMin}–$${d.priceMax}</div>`;
+  } else {
+    priceHTML = `<div class="plbl">suggested price</div><div class="pval">$—</div>`;
+  }
+  dp.innerHTML = priceHTML;
+
   g('ipill').textContent = d.item;
   const L = d.listings;
-  txt('fb-t', L.fb?.title); txt('fb-d', L.fb?.description);
-  txt('ig-t', L.ig?.title); txt('ig-d', L.ig?.description); tags('ig-tags', L.ig?.hashtags);
-  txt('tt-t', L.tt?.title); txt('tt-d', L.tt?.description); tags('tt-tags', L.tt?.hashtags);
-  txt('snap-t', L.snap?.title); txt('snap-d', L.snap?.description); tags('snap-tags', L.snap?.hashtags);
-  txt('tts-t', L.tts?.title); txt('tts-d', L.tts?.description); tags('tts-tags', L.tts?.hashtags);
+  txt('fb-t',L.fb?.title);   txt('fb-d',L.fb?.description);
+  txt('ig-t',L.ig?.title);   txt('ig-d',L.ig?.description);   tags('ig-tags', L.ig?.hashtags);
+  txt('tt-t',L.tt?.title);   txt('tt-d',L.tt?.description);   tags('tt-tags', L.tt?.hashtags);
+  txt('snap-t',L.snap?.title);txt('snap-d',L.snap?.description);tags('snap-tags', L.snap?.hashtags);
+  txt('tts-t',L.tts?.title); txt('tts-d',L.tts?.description); tags('tts-tags', L.tts?.hashtags);
+  g('tts-price').textContent = '$'+(d.ttsPrice||d.priceShipped||d.priceLocal||'—');
+  g('tts-note').textContent = d.ttsPriceNote||'';
   g('tips').innerHTML = (d.tips||[]).map(t=>`<div class="tip">${t}</div>`).join('');
-  ['fb','ig','tt','snap','tts'].forEach(k=>{ const el = document.getElementById('t-'+k); if (el) el.style.display = plts.includes(k) ? '' : 'none'; });
-  showTab(plts.find(k=>['fb','ig','tt','snap','tts'].includes(k)) || 'fb');
+
+  // Payment-request popover (Marketplace card only)
+  const fbPay = g('fb-pay');
+  if (d.paymentLine && S.profile.payments?.length) {
+    g('fb-pay-line').textContent = d.paymentLine;
+    fbPay.style.display = 'block';
+  } else {
+    fbPay.style.display = 'none';
+  }
+
+  ['fb','ig','tt','snap','tts'].forEach(k=>{
+    const el=document.getElementById('t-'+k);
+    if(el) el.style.display=plts.includes(k)?'':'none';
+  });
+  const first=plts.find(k=>['fb','ig','tt','snap','tts'].includes(k))||'fb';
+  showTab(first);
 }
 
-function showTab(t){ S.tab = t; ['fb','ig','tt','snap','tts'].forEach(k=>{ document.getElementById('t-'+k)?.classList.toggle('on', k===t); const c = document.getElementById('c-'+k); if (c) c.style.display = k===t ? 'block' : 'none'; }); }
-function g(id){ return document.getElementById(id); }
-function txt(id,v){ const el = g(id); if(el && v) el.textContent = v; }
-function tags(id,arr){ const el = g(id); if(!el || !arr) return; el.innerHTML = arr.map(t=>`<span class="htag">${t}</span>`).join(''); }
-function copy(p){ const L = S.data?.listings?.[p]; if(!L) return; const t = L.hashtags ? '\n\n' + L.hashtags.join(' ') : ''; navigator.clipboard.writeText(`${L.title}\n\n${L.description}${t}`).then(()=>toast('Copied!')); }
-function goFB(){ const L = S.data?.listings?.fb; window.open(`https://www.facebook.com/marketplace/create/item?title=${encodeURIComponent(L?.title||'')}&price=${S.data?.price||''}`,'_blank'); }
-function goIG(){ const L = S.data?.listings?.ig; navigator.clipboard.writeText(`${L.title}\n\n${L.description}\n\n${(L.hashtags||[]).join(' ')}`); toast('Copied'); setTimeout(()=>window.open('https://www.instagram.com','_blank'), 400); }
-function goTT(){ const L = S.data?.listings?.tt; navigator.clipboard.writeText(`${L.description}\n\n${(L.hashtags||[]).join(' ')}`); toast('Copied'); setTimeout(()=>window.open('https://www.tiktok.com','_blank'), 400); }
-function goSnap(){ const L = S.data?.listings?.snap; navigator.clipboard.writeText(`${L.description}\n${(L.hashtags||[]).join(' ')}`); toast('Copied'); setTimeout(()=>window.open('https://www.snapchat.com','_blank'), 400); }
-function goTTS(){ const L = S.data?.listings?.tts; navigator.clipboard.writeText(`${L.title}\n\n${L.description}\n\nPrice: $${S.data?.ttsPrice||S.data?.price}`); toast('Copied'); setTimeout(()=>window.open('https://seller.tiktok.com/en/product/add','_blank'), 400); }
-function setLoad(on){ g('loader').classList.toggle('on', on); g('ltxt').classList.toggle('on', on); g('genBtn').disabled = on; if (on) g('results').classList.remove('on'); }
-function showErr(m){ const e=g('errbox'); e.textContent=m; e.classList.add('on'); }
-function hideErr(){ g('errbox').classList.remove('on'); }
+function g(id){return document.getElementById(id);}
+function txt(id,v){const el=g(id);if(el&&v)el.textContent=v;}
+function tags(id,arr){
+  const el=g(id);if(!el||!arr)return;
+  const cityTag = S.profile.city ? S.profile.city.toLowerCase().replace(/\s/g,'') : '';
+  el.innerHTML = arr.map(t => {
+    const isCity = cityTag && t.toLowerCase().includes(cityTag);
+    return `<span class="htag${isCity?' city-hashtag':''}">${t}</span>`;
+  }).join('');
+}
+
+/* ── COPY ── */
+function copy(p){
+  const L=S.data?.listings?.[p];if(!L)return;
+  const t=L.hashtags?'\n\n'+L.hashtags.join(' '):'';
+  navigator.clipboard.writeText(`${L.title}\n\n${L.description}${t}`)
+    .then(()=>toast('Copied!'))
+    .catch(()=>toast('Copy failed — try manually'));
+}
+function copyPay(){
+  const line = g('fb-pay-line').textContent;
+  if (!line) return;
+  navigator.clipboard.writeText(line).then(()=>toast('Payment line copied!')).catch(()=>toast('Copy failed'));
+}
+
+/* ── PLATFORM ACTIONS — Web Share API + fallbacks ── */
+async function shareToApp(captionText, fileForShare, label) {
+  // Try Web Share API with file (works on iOS/Android in supporting browsers)
+  if (navigator.share && navigator.canShare && fileForShare) {
+    try {
+      const shareData = { text: captionText, files: [fileForShare] };
+      if (navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        toast('Shared!');
+        return true;
+      }
+    } catch(e) {
+      if (e.name === 'AbortError') return true;  // user cancelled, that's fine
+      // fall through to fallback
+    }
+  }
+  // Fallback: copy + open web/app
+  navigator.clipboard.writeText(captionText).catch(()=>{});
+  toast(`Caption copied! Opening ${label}…`);
+  return false;
+}
+
+async function getPhotoFile() {
+  if (!S.photos.length) return null;
+  try {
+    const blob = await (await fetch(`data:image/jpeg;base64,${S.photos[0].b64}`)).blob();
+    return new File([blob], 'fit.jpg', { type: 'image/jpeg' });
+  } catch(e) { return null; }
+}
+
+function goFB(){
+  const L = S.data?.listings?.fb;
+  const price = S.data?.priceLocal || S.data?.priceShipped || '';
+  navigator.clipboard.writeText(`${L?.title||''}\n\n${L?.description||''}`).catch(()=>{});
+  toast('Listing copied — opening Marketplace');
+  window.open(`https://www.facebook.com/marketplace/create/item?title=${encodeURIComponent(L?.title||'')}&price=${price}`, '_blank');
+}
+
+async function postIG(){
+  const L = S.data?.listings?.ig; if(!L) return;
+  const cap = `${L.title}\n\n${L.description}\n\n${(L.hashtags||[]).join(' ')}`;
+  const file = await getPhotoFile();
+  const shared = await shareToApp(cap, file, 'Instagram');
+  if (!shared) {
+    setTimeout(() => { window.open('instagram://camera','_blank'); setTimeout(()=>window.open('https://www.instagram.com','_blank'), 700); }, 300);
+  }
+}
+
+async function postTT(){
+  const L = S.data?.listings?.tt; if(!L) return;
+  const cap = `${L.description}\n\n${(L.hashtags||[]).join(' ')}`;
+  const file = await getPhotoFile();
+  const shared = await shareToApp(cap, file, 'TikTok');
+  if (!shared) {
+    setTimeout(() => { window.open('tiktok://app','_blank'); setTimeout(()=>window.open('https://www.tiktok.com','_blank'), 700); }, 300);
+  }
+}
+
+async function goSnap(){
+  const L = S.data?.listings?.snap; if(!L) return;
+  const cap = `${L.description}\n${(L.hashtags||[]).join(' ')}`;
+  const file = await getPhotoFile();
+  const shared = await shareToApp(cap, file, 'Snapchat');
+  if (!shared) {
+    setTimeout(() => { window.open('snapchat://app','_blank'); setTimeout(()=>window.open('https://www.snapchat.com','_blank'), 700); }, 300);
+  }
+}
+
+function goTTS(){
+  const L = S.data?.listings?.tts; if(!L) return;
+  const price = S.data?.ttsPrice || S.data?.priceShipped || S.data?.priceLocal;
+  const cap = `${L.title}\n\n${L.description}\n\nPrice: $${price}\n\n${(L.hashtags||[]).join(' ')}`;
+  navigator.clipboard.writeText(cap).catch(()=>{});
+  toast('Listing copied! Opening TikTok Shop…');
+  setTimeout(()=>window.open('https://seller.tiktok.com/en/product/add','_blank'), 400);
+}
+
+/* ── UI HELPERS ── */
+function setLoad(on){
+  g('loader').classList.toggle('on',on);
+  g('ltxt').classList.toggle('on',on);
+  g('genBtn').disabled=on;
+  if(on) g('results').classList.remove('on');
+}
+function showErr(m){const e=g('errbox');e.textContent=m;e.classList.add('on');}
+function hideErr(){g('errbox').classList.remove('on');}
 let _tt;
-function toast(m){ const el=g('toast'); el.textContent=m; el.classList.add('on'); clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('on'), 2500); }
-
-async function negotiate(){
-  const msg = document.getElementById('negMsg').value.trim();
-  if (!msg){ toast('Paste buyer message first'); return; }
-  if (!S.data){ toast('Generate listing first'); return; }
-  const minPrice = document.getElementById('negMin').value || S.data.priceMin;
-  const pickup = document.getElementById('negPickup').value.trim() || 'local pickup';
-  const payment = document.getElementById('negPay').value.trim() || 'Venmo or cash';
-  const tone = document.getElementById('negTone').value;
-  const btn = document.getElementById('negBtn');
-  btn.disabled = true; btn.textContent = '🤔 thinking...';
-  const prompt = `Help reply to a buyer DM.
-ITEM: ${S.data.item} (listed $${S.data.price})
-MIN: $${minPrice}, PICKUP: ${pickup}, PAY: ${payment}, TONE: ${tone}
-BUYER: "${msg}"
-Generate 3 reply strategies. Texting-style, 1-3 sentences. Never below min. Public meetups for safety.
-Return ONLY JSON: {"strategy":"summary","replies":[{"label":"Hold firm","body":"..."},{"label":"Meet middle","body":"..."},{"label":"Accept","body":"..."}],"safetyTip":"if relevant"}`;
-  try {
-    const d = await callAPI([{ role:'user', content:prompt }], 800);
-    const parsed = JSON.parse((d.content?.[0]?.text||'').replace(/```json|```/g,'').trim());
-    let html = '';
-    if (parsed.strategy) html += `<div class="neg-strategy">📊 ${parsed.strategy}</div>`;
-    (parsed.replies||[]).forEach((r,i)=>{ html += `<div class="neg-reply"><div class="neg-reply-label">${r.label}</div><div class="neg-reply-body">${r.body}</div><div class="neg-reply-actions"><button class="neg-mini-btn" onclick="copyReply(${i})">📋 Copy</button></div></div>`; });
-    if (parsed.safetyTip) html += `<div class="neg-strategy" style="border-left-color:var(--bubble-deep);color:var(--bubble-deep);">⚠️ ${parsed.safetyTip}</div>`;
-    document.getElementById('negReplies').innerHTML = html;
-    document.getElementById('negReplies').classList.add('on');
-    S._replies = parsed.replies || [];
-  } catch(e){ toast('Negotiator error'); }
-  finally { btn.disabled = false; btn.textContent = '💬 Draft Smart Replies'; }
+function toast(m){
+  const el=g('toast');el.textContent=m;el.classList.add('on');
+  clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('on'),2600);
 }
-function copyReply(i){ const r = S._replies?.[i]; if(!r) return; navigator.clipboard.writeText(r.body).then(()=>toast('Reply copied')); }
-
-function saveDraft(){
-  if (!S.data){ toast('Generate first'); return; }
-  const id = 'd' + Date.now();
-  const draft = { id, ts:Date.now(), item:S.data.item, price:S.data.price, thumb:S.photos[0]?.url||'', data:S.data, cond:S.cond };
-  try {
-    const drafts = JSON.parse(localStorage.getItem('dropmyfit_drafts') || '[]');
-    drafts.push(draft);
-    localStorage.setItem('dropmyfit_drafts', JSON.stringify(drafts));
-    toast('💾 Saved!'); refreshDraftsCount();
-  } catch(e){ toast('Save failed'); }
-}
-function refreshDraftsCount(){
-  try {
-    const drafts = JSON.parse(localStorage.getItem('dropmyfit_drafts') || '[]');
-    const btn = document.getElementById('draftsBtn');
-    document.getElementById('draftsCount').textContent = drafts.length;
-    btn.style.display = drafts.length > 0 ? 'flex' : 'none';
-  } catch(e){}
-}
-function openDrafts(){
-  try {
-    const drafts = JSON.parse(localStorage.getItem('dropmyfit_drafts') || '[]');
-    if (!drafts.length){ toast('No drafts'); return; }
-    const list = drafts.map((d,i)=>`${i+1}. ${d.item} ($${d.price})`).join('\n');
-    if (confirm('Saved drafts:\n\n' + list + '\n\nClear all?')){ localStorage.removeItem('dropmyfit_drafts'); refreshDraftsCount(); toast('Cleared'); }
-  } catch(e){}
-}
-
-refreshDraftsCount();
 </script>
+
 </body>
 </html>
